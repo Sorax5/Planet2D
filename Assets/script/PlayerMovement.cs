@@ -21,6 +21,7 @@ public class PlayerMovement : Attractable
     private Vector2 velocity;
     private float horizontal;
     
+    [SerializeField]
     private bool grounded;
     #endregion
 
@@ -35,12 +36,12 @@ public class PlayerMovement : Attractable
     private void Update()
     {
         horizontal = Input.GetAxisRaw("Horizontal");
-        grounded = this.IsGrounded();
     }
 
     // Update is called once per frame
     void FixedUpdate()
     {
+        grounded = this.IsGrounded();
         if (Direction != null)
         {
             Vector2 moveDirection = Vector2.Perpendicular(-Direction);
@@ -51,12 +52,9 @@ public class PlayerMovement : Attractable
 
             rb.velocity = Vector2.Lerp(rb.velocity, velocity, Time.deltaTime);
             
-            if (rb.velocity.y == 0)
-            {
-                rb.velocity *= groundFriction;
-            }
+            rb.velocity *= groundFriction;
             
-            if (Input.GetKeyDown(KeyCode.Space) && grounded)
+            if (Input.GetKey(KeyCode.Space) && grounded)
             {
                 Debug.Log("Jump");
                 rb.AddForce(Direction*jumpForce, ForceMode2D.Impulse);
@@ -70,8 +68,8 @@ public class PlayerMovement : Attractable
 
     private bool IsGrounded()
     {
-        RaycastHit2D hit = Physics2D.Raycast(transform.position, -Direction, 0.8f);
-        Debug.DrawRay(transform.position, -Direction*0.7f, Color.red);
+        RaycastHit2D hit = Physics2D.Raycast(transform.position, -this.Direction, 0.9f);
+        Debug.DrawRay(transform.position, -this.Direction*0.8f, Color.red);
         return hit.collider != null;
     }
 
